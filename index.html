@@ -3,24 +3,24 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Once Human 動画繁殖タイマー</title>
+<title>Once Human 動物繁殖タイマー</title>
 <style>
 *{box-sizing:border-box}
 body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#020503;color:#fff;min-height:100vh}
-body:before{content:"";position:fixed;inset:0;background:radial-gradient(circle at 80% 10%,rgba(20,80,40,.35),transparent 35%),linear-gradient(rgba(0,0,0,.15),rgba(0,0,0,.92)),url("C6B5C7E6-C0A5-4D30-9AB6-24B33C4FDD14.png") center/cover no-repeat;z-index:-2}
-body:after{content:"";position:fixed;inset:0;background:rgba(0,0,0,.45);backdrop-filter:blur(1px);z-index:-1}
+body:before{content:"";position:fixed;inset:0;background:linear-gradient(rgba(0,0,0,.45),rgba(0,0,0,.92)),url("C6B5C7E6-C0A5-4D30-9AB6-24B33C4FDD14.png") center/cover no-repeat;z-index:-2}
 .app{max-width:760px;margin:auto;padding:22px 12px 80px}
 h1{text-align:center;color:#ffd86b;font-size:34px;margin:10px 0 4px;text-shadow:0 0 14px rgba(255,210,80,.75)}
 .sub{text-align:center;color:#ffe7a6;margin-bottom:18px;font-weight:800}
 .line{height:1px;background:linear-gradient(90deg,transparent,#ffd86b,transparent);margin:8px 20px 14px}
-.area{border:1px solid #d9a62b;border-radius:18px;padding:14px;margin:14px 0;background:linear-gradient(135deg,rgba(0,40,20,.72),rgba(0,0,0,.82));box-shadow:0 0 18px rgba(255,190,40,.18)}
-.area:nth-child(2){background:linear-gradient(135deg,rgba(0,25,50,.72),rgba(0,0,0,.84))}
-.area:nth-child(3){background:linear-gradient(135deg,rgba(60,0,0,.65),rgba(0,0,0,.84))}
+.area{position:relative;overflow:hidden;border:1px solid #d9a62b;border-radius:18px;padding:14px;margin:14px 0;background:#050505;box-shadow:0 0 18px rgba(255,190,40,.18)}
+.area:before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(0,0,0,.25),rgba(0,0,0,.86)),var(--bg) center/cover no-repeat;opacity:.34;z-index:0}
+.area>*{position:relative;z-index:1}
 .top{display:grid;grid-template-columns:1fr 1.2fr;gap:14px;align-items:center}
 .badges{display:flex;gap:8px;align-items:center;margin-bottom:10px}
 .place{display:inline-block;border:1px solid #27ff82;color:#fff6bd;background:rgba(0,120,40,.45);border-radius:10px;padding:5px 12px;font-weight:900;font-size:20px}
 .status{display:inline-block;border:1px solid #ff4d4d;background:#9b1010;border-radius:999px;padding:5px 14px;font-weight:900;color:#fff}
 .status.ready{background:#0b7a3a;border-color:#32ff8d}
+.status.active{background:#9c6b00;border-color:#ffd86b}
 label.title{display:block;color:#ffdf75;font-weight:900;margin:10px 0 6px}
 input,select,button{width:100%;font-size:16px;border-radius:10px;padding:12px;border:1px solid rgba(255,216,107,.65);background:rgba(0,0,0,.72);color:#fff}
 .timerBox{text-align:center}
@@ -31,8 +31,8 @@ input,select,button{width:100%;font-size:16px;border-radius:10px;padding:12px;bo
 .bar{height:100%;width:0%;background:linear-gradient(90deg,#1cff7b,#ffd86b);transition:.3s}
 .percent{text-align:center;color:#35ff82;font-weight:900;margin-bottom:10px}
 .actions{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:14px 0}
-button.start{background:linear-gradient(180deg,#48a52c,#245f13);border-color:#ffd86b;box-shadow:0 0 14px rgba(140,255,70,.35)}
-button.reset{background:linear-gradient(180deg,#d72828,#7c0a0a);border-color:#ff6b4a;box-shadow:0 0 14px rgba(255,30,20,.35)}
+button.start{background:linear-gradient(180deg,#48a52c,#245f13);border-color:#ffd86b}
+button.reset{background:linear-gradient(180deg,#d72828,#7c0a0a);border-color:#ff6b4a}
 .selectBox{border:1px solid rgba(255,216,107,.45);border-radius:12px;padding:10px;background:rgba(0,0,0,.42)}
 .selectHead{display:flex;justify-content:space-between;color:#ffd86b;font-weight:900;margin-bottom:8px}
 .addRow{display:grid;grid-template-columns:1fr 92px;gap:8px}
@@ -56,13 +56,14 @@ button.add{background:linear-gradient(180deg,#2c8d39,#124e1f)}
 </div>
 <script>
 const DAY=24*60*60*1000;
-const KEY="oncehuman_ready_timer_design2";
+const KEY="oncehuman_ready_timer_design2_fixed";
 const animals=[
 ["オオカミ","🐺"],["ヒョウ","🐆"],["クマ","🐻"],["ホッキョクグマ","🐻‍❄️"],
 ["イノシシ","🐗"],["バッファロー","🦬"],["シカ","🦌"],["ヒツジ","🐑"],
 ["ウサギ","🐰"],["カピバラ","🦫"],["キツネ","🦊"],["スノーフォックス","❄️🦊"],
 ["フラミンゴ","🦩"],["ワニ","🐊"],["ワニガメ","🐢"],["ウミガメ","🌊🐢"]
 ];
+const bgImgs=["IMG_5849.png","IMG_5850.png","IMG_5851.png"];
 let data=JSON.parse(localStorage.getItem(KEY)||"null")||[
 {name:"",start:null,done:false,selected:[]},
 {name:"",start:null,done:false,selected:[]},
@@ -73,27 +74,40 @@ function fmt(ms){if(ms<=0)return"00:00:00";let s=Math.floor(ms/1000),h=Math.floo
 function icon(name){let a=animals.find(x=>x[0]===name);return a?a[1]:"🐾"}
 function beep(){try{let c=new AudioContext(),o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.frequency.value=880;g.gain.value=.09;o.start();setTimeout(()=>{o.stop();c.close()},800);if(navigator.vibrate)navigator.vibrate([300,120,300])}catch(e){}}
 function toastMsg(t){toast.textContent=t;toast.style.display="block";setTimeout(()=>toast.style.display="none",5000)}
-function startTimer(i){data[i].start=Date.now();data[i].done=false;save();render()}
-function resetTimer(i){data[i].start=null;data[i].done=false;save();render()}
-function setName(i,v){data[i].name=v;save();renderBadgesOnly()}
-function addAnimal(i){let sel=document.getElementById("animal"+i);let val=sel.value;if(!val)return;if(data[i].selected.length>=5){alert("1つの繁殖場につき5つまでです");return}if(data[i].selected.includes(val)){alert("すでに選択されています");return}data[i].selected.push(val);sel.value="";save();render()}
-function removeAnimal(i,name){data[i].selected=data[i].selected.filter(x=>x!==name);save();render()}
-function renderBadgesOnly(){document.querySelectorAll("[data-tamer]").forEach(el=>{let i=Number(el.dataset.tamer);el.textContent=data[i].name||`テイマー${i+1}`})}
-function render(){
+function startTimer(i){data[i].start=Date.now();data[i].done=false;save();updateTimers()}
+function resetTimer(i){data[i].start=null;data[i].done=false;save();updateTimers()}
+function setName(i,v){data[i].name=v;save()}
+function addAnimal(i){
+let sel=document.getElementById("animal"+i);
+let val=sel.value;
+if(!val)return;
+if(data[i].selected.length>=5){alert("1つの繁殖場につき5つまでです");return}
+if(data[i].selected.includes(val)){alert("すでに選択されています");return}
+data[i].selected.push(val);
+sel.value="";
+save();
+renderSelected(i);
+}
+function removeAnimal(i,name){data[i].selected=data[i].selected.filter(x=>x!==name);save();renderSelected(i)}
+function renderSelected(i){
+let box=document.getElementById("selected"+i);
+let count=document.getElementById("count"+i);
+count.textContent=data[i].selected.length+" / 5";
+box.innerHTML=data[i].selected.length
+?data[i].selected.map(n=>`<span class="pill">${icon(n)} ${n}<button onclick="removeAnimal(${i},'${n}')">×</button></span>`).join("")
+:"選択された動物はありません";
+}
+function build(){
 areas.innerHTML="";
 data.forEach((a,i)=>{
-let left=a.start?a.start+DAY-Date.now():DAY;
-let pct=a.start?Math.max(0,Math.min(100,left/DAY*100)):0;
-let ready=a.start&&left<=0;
-if(ready&&!a.done){a.done=true;beep();toastMsg(`繁殖場${i+1}の繁殖準備が完了しました！`);save()}
-let selected=a.selected.length?a.selected.map(n=>`<span class="pill">${icon(n)} ${n}<button onclick="removeAnimal(${i},'${n}')">×</button></span>`).join(""):"選択された動物はありません";
 let opts='<option value="">動物を選択してください</option>'+animals.map(x=>`<option value="${x[0]}">${x[1]} ${x[0]}</option>`).join("");
 let div=document.createElement("div");
 div.className="area";
+div.style.setProperty("--bg",`url("${bgImgs[i]}")`);
 div.innerHTML=`
 <div class="badges">
 <span class="place">繁殖場${i+1}</span>
-<span class="status ${ready?'ready':''}">${ready?'準備完了':a.start?'稼働中':'未開始'}</span>
+<span id="status${i}" class="status">未開始</span>
 </div>
 <div class="top">
 <div>
@@ -105,27 +119,55 @@ div.innerHTML=`
 </div>
 </div>
 <div class="timerBox">
-<div class="timerState">${ready?'準備完了':a.start?'稼働中':'未セット'}</div>
-<div class="timer">${ready?'00:00:00':fmt(left)}</div>
+<div id="state${i}" class="timerState">未セット</div>
+<div id="timer${i}" class="timer">24:00:00</div>
 <div class="units">時 分 秒</div>
-<div class="progress"><div class="bar" style="width:${pct}%"></div></div>
-<div class="percent">${Math.round(100-pct)}%</div>
+<div class="progress"><div id="bar${i}" class="bar"></div></div>
+<div id="percent${i}" class="percent">0%</div>
 </div>
 </div>
 <div class="selectBox">
-<div class="selectHead"><span>動物を選択（最大5つまで）</span><span>${a.selected.length} / 5</span></div>
+<div class="selectHead"><span>動物を選択（最大5つまで）</span><span id="count${i}">0 / 5</span></div>
 <div class="addRow">
 <select id="animal${i}">${opts}</select>
 <button class="add" onclick="addAnimal(${i})">追加</button>
 </div>
-<div class="selected">${selected}</div>
+<div id="selected${i}" class="selected">選択された動物はありません</div>
 </div>
 `;
 areas.appendChild(div);
+renderSelected(i);
+});
+updateTimers();
+}
+function updateTimers(){
+data.forEach((a,i)=>{
+let left=a.start?a.start+DAY-Date.now():DAY;
+let pct=a.start?Math.max(0,Math.min(100,left/DAY*100)):0;
+let ready=a.start&&left<=0;
+document.getElementById("timer"+i).textContent=ready?"00:00:00":fmt(left);
+document.getElementById("bar"+i).style.width=pct+"%";
+document.getElementById("percent"+i).textContent=Math.round(100-pct)+"%";
+let status=document.getElementById("status"+i);
+let state=document.getElementById("state"+i);
+if(ready){
+status.textContent="準備完了";
+status.className="status ready";
+state.textContent="準備完了";
+if(!a.done){a.done=true;beep();toastMsg(`繁殖場${i+1}の繁殖準備が完了しました！`);save()}
+}else if(a.start){
+status.textContent="繁殖中";
+status.className="status active";
+state.textContent="繁殖中";
+}else{
+status.textContent="未開始";
+status.className="status";
+state.textContent="未セット";
+}
 });
 }
-render();
-setInterval(render,1000);
+build();
+setInterval(updateTimers,1000);
 </script>
 </body>
 </html>
