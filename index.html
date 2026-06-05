@@ -3,39 +3,60 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Once Human 繁殖準備タイマー</title>
+<title>Once Human 動画繁殖タイマー</title>
 <style>
 *{box-sizing:border-box}
-body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#050806;color:#f8e7b0;min-height:100vh}
-body:before{content:"";position:fixed;inset:0;background:linear-gradient(rgba(0,0,0,.45),rgba(0,0,0,.9)),url("C6B5C7E6-C0A5-4D30-9AB6-24B33C4FDD14.png") center/cover no-repeat;z-index:-2}
-.app{max-width:650px;margin:auto;padding:28px 14px 80px}
-h1{text-align:center;color:#ffd36b;text-shadow:0 0 12px #000}
-.sub{text-align:center;margin-bottom:18px}
-.card{background:rgba(0,0,0,.82);border:1px solid rgba(255,210,100,.6);border-radius:18px;padding:16px;margin:14px 0}
-.badge{display:inline-block;color:#86ffc4;border:1px solid rgba(0,255,160,.55);border-radius:999px;padding:5px 10px;font-size:12px;margin-bottom:10px}
-.timer{font-size:38px;text-align:center;font-weight:900;color:#ffd36b;margin:10px 0}
-.done{color:#84ffb5}
-button{width:100%;font-size:16px;border-radius:12px;padding:12px;margin:6px 0;border:1px solid #ffd36b;font-weight:900;color:#fff3c4;background:linear-gradient(180deg,#c99635,#7c4b10)}
-button.reset{background:linear-gradient(180deg,#9b2f25,#4b0f0d)}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-label{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.06);border:1px solid rgba(255,210,100,.25);border-radius:12px;padding:9px;font-size:14px}
-input[type="checkbox"]{width:20px;height:20px}
-.barWrap{height:12px;background:#151515;border-radius:999px;overflow:hidden;margin:12px 0}
-.bar{height:100%;background:linear-gradient(90deg,#00ff99,#ffd36b)}
-.message{text-align:center;font-weight:900;margin-top:8px;color:#84ffb5}
-.toast{position:fixed;top:18px;left:14px;right:14px;background:#0b3d2b;border:1px solid #ffd36b;padding:14px;border-radius:16px;text-align:center;display:none;z-index:10;font-weight:900}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#020503;color:#fff;min-height:100vh}
+body:before{content:"";position:fixed;inset:0;background:radial-gradient(circle at 80% 10%,rgba(20,80,40,.35),transparent 35%),linear-gradient(rgba(0,0,0,.15),rgba(0,0,0,.92)),url("C6B5C7E6-C0A5-4D30-9AB6-24B33C4FDD14.png") center/cover no-repeat;z-index:-2}
+body:after{content:"";position:fixed;inset:0;background:rgba(0,0,0,.45);backdrop-filter:blur(1px);z-index:-1}
+.app{max-width:760px;margin:auto;padding:22px 12px 80px}
+h1{text-align:center;color:#ffd86b;font-size:34px;margin:10px 0 4px;text-shadow:0 0 14px rgba(255,210,80,.75)}
+.sub{text-align:center;color:#ffe7a6;margin-bottom:18px;font-weight:800}
+.line{height:1px;background:linear-gradient(90deg,transparent,#ffd86b,transparent);margin:8px 20px 14px}
+.area{border:1px solid #d9a62b;border-radius:18px;padding:14px;margin:14px 0;background:linear-gradient(135deg,rgba(0,40,20,.72),rgba(0,0,0,.82));box-shadow:0 0 18px rgba(255,190,40,.18)}
+.area:nth-child(2){background:linear-gradient(135deg,rgba(0,25,50,.72),rgba(0,0,0,.84))}
+.area:nth-child(3){background:linear-gradient(135deg,rgba(60,0,0,.65),rgba(0,0,0,.84))}
+.top{display:grid;grid-template-columns:1fr 1.2fr;gap:14px;align-items:center}
+.badges{display:flex;gap:8px;align-items:center;margin-bottom:10px}
+.place{display:inline-block;border:1px solid #27ff82;color:#fff6bd;background:rgba(0,120,40,.45);border-radius:10px;padding:5px 12px;font-weight:900;font-size:20px}
+.status{display:inline-block;border:1px solid #ff4d4d;background:#9b1010;border-radius:999px;padding:5px 14px;font-weight:900;color:#fff}
+.status.ready{background:#0b7a3a;border-color:#32ff8d}
+label.title{display:block;color:#ffdf75;font-weight:900;margin:10px 0 6px}
+input,select,button{width:100%;font-size:16px;border-radius:10px;padding:12px;border:1px solid rgba(255,216,107,.65);background:rgba(0,0,0,.72);color:#fff}
+.timerBox{text-align:center}
+.timerState{font-size:34px;color:#ffd86b;font-weight:900;text-shadow:0 0 12px rgba(255,210,80,.65)}
+.timer{font-size:42px;letter-spacing:3px;font-weight:900;color:#fff;margin:4px 0}
+.units{font-size:13px;color:#eee;letter-spacing:26px;margin-left:22px}
+.progress{height:14px;background:#202020;border-radius:999px;overflow:hidden;border:1px solid #333;margin:12px 0 2px}
+.bar{height:100%;width:0%;background:linear-gradient(90deg,#1cff7b,#ffd86b);transition:.3s}
+.percent{text-align:center;color:#35ff82;font-weight:900;margin-bottom:10px}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:14px 0}
+button.start{background:linear-gradient(180deg,#48a52c,#245f13);border-color:#ffd86b;box-shadow:0 0 14px rgba(140,255,70,.35)}
+button.reset{background:linear-gradient(180deg,#d72828,#7c0a0a);border-color:#ff6b4a;box-shadow:0 0 14px rgba(255,30,20,.35)}
+.selectBox{border:1px solid rgba(255,216,107,.45);border-radius:12px;padding:10px;background:rgba(0,0,0,.42)}
+.selectHead{display:flex;justify-content:space-between;color:#ffd86b;font-weight:900;margin-bottom:8px}
+.addRow{display:grid;grid-template-columns:1fr 92px;gap:8px}
+button.add{background:linear-gradient(180deg,#2c8d39,#124e1f)}
+.selected{margin-top:8px;border:1px solid rgba(255,255,255,.18);border-radius:10px;min-height:44px;padding:9px;color:#ddd;text-align:center;background:rgba(0,0,0,.45)}
+.pill{display:inline-flex;align-items:center;gap:6px;border:1px solid rgba(255,216,107,.45);border-radius:999px;padding:6px 10px;margin:4px;background:rgba(255,216,107,.08)}
+.pill button{width:auto;padding:2px 7px;margin:0;border-radius:999px;background:#9b1010}
+.toast{position:fixed;top:16px;left:12px;right:12px;background:#0b3d2b;border:1px solid #ffd86b;border-radius:14px;padding:14px;text-align:center;font-weight:900;display:none;z-index:10;color:#fff}
+.note{text-align:center;color:#ffd86b;font-size:13px;margin:18px 0}
+@media(max-width:620px){.top{grid-template-columns:1fr}.timer{font-size:38px}.units{letter-spacing:20px}}
 </style>
 </head>
 <body>
 <div id="toast" class="toast"></div>
 <div class="app">
-<h1>Once Human 繁殖準備タイマー</h1>
+<h1>Once Human 動物繁殖タイマー</h1>
+<div class="line"></div>
 <div class="sub">24時間後に繁殖準備完了</div>
 <div id="areas"></div>
+<div class="note">※ タイマーは24時間固定です。ブラウザを閉じても時間は保持されます。</div>
 </div>
 <script>
 const DAY=24*60*60*1000;
-const KEY="oncehuman_breeding_ready_timer_v1";
+const KEY="oncehuman_ready_timer_design2";
 const animals=[
 ["オオカミ","🐺"],["ヒョウ","🐆"],["クマ","🐻"],["ホッキョクグマ","🐻‍❄️"],
 ["イノシシ","🐗"],["バッファロー","🦬"],["シカ","🦌"],["ヒツジ","🐑"],
@@ -43,83 +64,64 @@ const animals=[
 ["フラミンゴ","🦩"],["ワニ","🐊"],["ワニガメ","🐢"],["ウミガメ","🌊🐢"]
 ];
 let data=JSON.parse(localStorage.getItem(KEY)||"null")||[
-{name:"テイマー1（繁殖場1）",start:null,done:false,checked:{}},
-{name:"テイマー2（繁殖場2）",start:null,done:false,checked:{}},
-{name:"テイマー3（繁殖場3）",start:null,done:false,checked:{}}
+{name:"",start:null,done:false,selected:[]},
+{name:"",start:null,done:false,selected:[]},
+{name:"",start:null,done:false,selected:[]}
 ];
 function save(){localStorage.setItem(KEY,JSON.stringify(data))}
-function fmt(ms){
-if(ms<=0)return"準備完了！";
-let s=Math.floor(ms/1000);
-let h=Math.floor(s/3600);
-let m=Math.floor((s%3600)/60);
-let sec=s%60;
-return String(h).padStart(2,"0")+":"+String(m).padStart(2,"0")+":"+String(sec).padStart(2,"0");
-}
-function beep(){
-try{
-let c=new AudioContext(),o=c.createOscillator(),g=c.createGain();
-o.connect(g);g.connect(c.destination);
-o.frequency.value=880;g.gain.value=.09;
-o.start();
-setTimeout(()=>{o.stop();c.close()},700);
-if(navigator.vibrate)navigator.vibrate([300,120,300]);
-}catch(e){}
-}
-function showToast(text){
-toast.textContent=text;
-toast.style.display="block";
-setTimeout(()=>toast.style.display="none",5000);
-}
-function startTimer(i){
-data[i].start=Date.now();
-data[i].done=false;
-save();render();
-}
-function resetTimer(i){
-data[i].start=null;
-data[i].done=false;
-save();render();
-}
-function toggleAnimal(i,name,checked){
-data[i].checked[name]=checked;
-save();
-}
+function fmt(ms){if(ms<=0)return"00:00:00";let s=Math.floor(ms/1000),h=Math.floor(s/3600),m=Math.floor((s%3600)/60),sec=s%60;return `${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}:${String(sec).padStart(2,"0")}`}
+function icon(name){let a=animals.find(x=>x[0]===name);return a?a[1]:"🐾"}
+function beep(){try{let c=new AudioContext(),o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.frequency.value=880;g.gain.value=.09;o.start();setTimeout(()=>{o.stop();c.close()},800);if(navigator.vibrate)navigator.vibrate([300,120,300])}catch(e){}}
+function toastMsg(t){toast.textContent=t;toast.style.display="block";setTimeout(()=>toast.style.display="none",5000)}
+function startTimer(i){data[i].start=Date.now();data[i].done=false;save();render()}
+function resetTimer(i){data[i].start=null;data[i].done=false;save();render()}
+function setName(i,v){data[i].name=v;save();renderBadgesOnly()}
+function addAnimal(i){let sel=document.getElementById("animal"+i);let val=sel.value;if(!val)return;if(data[i].selected.length>=5){alert("1つの繁殖場につき5つまでです");return}if(data[i].selected.includes(val)){alert("すでに選択されています");return}data[i].selected.push(val);sel.value="";save();render()}
+function removeAnimal(i,name){data[i].selected=data[i].selected.filter(x=>x!==name);save();render()}
+function renderBadgesOnly(){document.querySelectorAll("[data-tamer]").forEach(el=>{let i=Number(el.dataset.tamer);el.textContent=data[i].name||`テイマー${i+1}`})}
 function render(){
 areas.innerHTML="";
-data.forEach((area,i)=>{
-let left=0,pct=0,timeText="未開始",doneMsg="";
-if(area.start){
-left=area.start+DAY-Date.now();
-pct=Math.max(0,Math.min(100,left/DAY*100));
-timeText=fmt(left);
-if(left<=0&&!area.done){
-area.done=true;
-beep();
-showToast(area.name+" の繁殖準備が完了しました！");
-save();
-}
-if(left<=0){
-doneMsg='<div class="message">🎉 繁殖準備完了！</div>';
-}
-}
-let checkedList=animals.map(a=>{
-let name=a[0],icon=a[1];
-let checked=area.checked[name]?"checked":"";
-return `<label><input type="checkbox" ${checked} onchange="toggleAnimal(${i},'${name}',this.checked)"> ${icon} ${name}</label>`;
-}).join("");
-let card=document.createElement("div");
-card.className="card";
-card.innerHTML=`
-<div class="badge">${area.name}</div>
-<div class="timer ${left<=0&&area.start?'done':''}">${timeText}</div>
-<div class="barWrap"><div class="bar" style="width:${area.start?pct:0}%"></div></div>
-${doneMsg}
-<button onclick="startTimer(${i})">24時間タイマー開始</button>
-<button class="reset" onclick="resetTimer(${i})">リセット</button>
-<div class="grid">${checkedList}</div>
+data.forEach((a,i)=>{
+let left=a.start?a.start+DAY-Date.now():DAY;
+let pct=a.start?Math.max(0,Math.min(100,left/DAY*100)):0;
+let ready=a.start&&left<=0;
+if(ready&&!a.done){a.done=true;beep();toastMsg(`繁殖場${i+1}の繁殖準備が完了しました！`);save()}
+let selected=a.selected.length?a.selected.map(n=>`<span class="pill">${icon(n)} ${n}<button onclick="removeAnimal(${i},'${n}')">×</button></span>`).join(""):"選択された動物はありません";
+let opts='<option value="">動物を選択してください</option>'+animals.map(x=>`<option value="${x[0]}">${x[1]} ${x[0]}</option>`).join("");
+let div=document.createElement("div");
+div.className="area";
+div.innerHTML=`
+<div class="badges">
+<span class="place">繁殖場${i+1}</span>
+<span class="status ${ready?'ready':''}">${ready?'準備完了':a.start?'稼働中':'未開始'}</span>
+</div>
+<div class="top">
+<div>
+<label class="title">テイマー名</label>
+<input value="${a.name}" oninput="setName(${i},this.value)" placeholder="テイマー名を入力してください">
+<div class="actions">
+<button class="start" onclick="startTimer(${i})">▶ 24時間タイマー開始</button>
+<button class="reset" onclick="resetTimer(${i})">↻ リセット</button>
+</div>
+</div>
+<div class="timerBox">
+<div class="timerState">${ready?'準備完了':a.start?'稼働中':'未セット'}</div>
+<div class="timer">${ready?'00:00:00':fmt(left)}</div>
+<div class="units">時 分 秒</div>
+<div class="progress"><div class="bar" style="width:${pct}%"></div></div>
+<div class="percent">${Math.round(100-pct)}%</div>
+</div>
+</div>
+<div class="selectBox">
+<div class="selectHead"><span>動物を選択（最大5つまで）</span><span>${a.selected.length} / 5</span></div>
+<div class="addRow">
+<select id="animal${i}">${opts}</select>
+<button class="add" onclick="addAnimal(${i})">追加</button>
+</div>
+<div class="selected">${selected}</div>
+</div>
 `;
-areas.appendChild(card);
+areas.appendChild(div);
 });
 }
 render();
