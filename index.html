@@ -1,1 +1,129 @@
-
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Once Human 繁殖準備タイマー</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#050806;color:#f8e7b0;min-height:100vh}
+body:before{content:"";position:fixed;inset:0;background:linear-gradient(rgba(0,0,0,.45),rgba(0,0,0,.9)),url("C6B5C7E6-C0A5-4D30-9AB6-24B33C4FDD14.png") center/cover no-repeat;z-index:-2}
+.app{max-width:650px;margin:auto;padding:28px 14px 80px}
+h1{text-align:center;color:#ffd36b;text-shadow:0 0 12px #000}
+.sub{text-align:center;margin-bottom:18px}
+.card{background:rgba(0,0,0,.82);border:1px solid rgba(255,210,100,.6);border-radius:18px;padding:16px;margin:14px 0}
+.badge{display:inline-block;color:#86ffc4;border:1px solid rgba(0,255,160,.55);border-radius:999px;padding:5px 10px;font-size:12px;margin-bottom:10px}
+.timer{font-size:38px;text-align:center;font-weight:900;color:#ffd36b;margin:10px 0}
+.done{color:#84ffb5}
+button{width:100%;font-size:16px;border-radius:12px;padding:12px;margin:6px 0;border:1px solid #ffd36b;font-weight:900;color:#fff3c4;background:linear-gradient(180deg,#c99635,#7c4b10)}
+button.reset{background:linear-gradient(180deg,#9b2f25,#4b0f0d)}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+label{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.06);border:1px solid rgba(255,210,100,.25);border-radius:12px;padding:9px;font-size:14px}
+input[type="checkbox"]{width:20px;height:20px}
+.barWrap{height:12px;background:#151515;border-radius:999px;overflow:hidden;margin:12px 0}
+.bar{height:100%;background:linear-gradient(90deg,#00ff99,#ffd36b)}
+.message{text-align:center;font-weight:900;margin-top:8px;color:#84ffb5}
+.toast{position:fixed;top:18px;left:14px;right:14px;background:#0b3d2b;border:1px solid #ffd36b;padding:14px;border-radius:16px;text-align:center;display:none;z-index:10;font-weight:900}
+</style>
+</head>
+<body>
+<div id="toast" class="toast"></div>
+<div class="app">
+<h1>Once Human 繁殖準備タイマー</h1>
+<div class="sub">24時間後に繁殖準備完了</div>
+<div id="areas"></div>
+</div>
+<script>
+const DAY=24*60*60*1000;
+const KEY="oncehuman_breeding_ready_timer_v1";
+const animals=[
+["オオカミ","🐺"],["ヒョウ","🐆"],["クマ","🐻"],["ホッキョクグマ","🐻‍❄️"],
+["イノシシ","🐗"],["バッファロー","🦬"],["シカ","🦌"],["ヒツジ","🐑"],
+["ウサギ","🐰"],["カピバラ","🦫"],["キツネ","🦊"],["スノーフォックス","❄️🦊"],
+["フラミンゴ","🦩"],["ワニ","🐊"],["ワニガメ","🐢"],["ウミガメ","🌊🐢"]
+];
+let data=JSON.parse(localStorage.getItem(KEY)||"null")||[
+{name:"テイマー1（繁殖場1）",start:null,done:false,checked:{}},
+{name:"テイマー2（繁殖場2）",start:null,done:false,checked:{}},
+{name:"テイマー3（繁殖場3）",start:null,done:false,checked:{}}
+];
+function save(){localStorage.setItem(KEY,JSON.stringify(data))}
+function fmt(ms){
+if(ms<=0)return"準備完了！";
+let s=Math.floor(ms/1000);
+let h=Math.floor(s/3600);
+let m=Math.floor((s%3600)/60);
+let sec=s%60;
+return String(h).padStart(2,"0")+":"+String(m).padStart(2,"0")+":"+String(sec).padStart(2,"0");
+}
+function beep(){
+try{
+let c=new AudioContext(),o=c.createOscillator(),g=c.createGain();
+o.connect(g);g.connect(c.destination);
+o.frequency.value=880;g.gain.value=.09;
+o.start();
+setTimeout(()=>{o.stop();c.close()},700);
+if(navigator.vibrate)navigator.vibrate([300,120,300]);
+}catch(e){}
+}
+function showToast(text){
+toast.textContent=text;
+toast.style.display="block";
+setTimeout(()=>toast.style.display="none",5000);
+}
+function startTimer(i){
+data[i].start=Date.now();
+data[i].done=false;
+save();render();
+}
+function resetTimer(i){
+data[i].start=null;
+data[i].done=false;
+save();render();
+}
+function toggleAnimal(i,name,checked){
+data[i].checked[name]=checked;
+save();
+}
+function render(){
+areas.innerHTML="";
+data.forEach((area,i)=>{
+let left=0,pct=0,timeText="未開始",doneMsg="";
+if(area.start){
+left=area.start+DAY-Date.now();
+pct=Math.max(0,Math.min(100,left/DAY*100));
+timeText=fmt(left);
+if(left<=0&&!area.done){
+area.done=true;
+beep();
+showToast(area.name+" の繁殖準備が完了しました！");
+save();
+}
+if(left<=0){
+doneMsg='<div class="message">🎉 繁殖準備完了！</div>';
+}
+}
+let checkedList=animals.map(a=>{
+let name=a[0],icon=a[1];
+let checked=area.checked[name]?"checked":"";
+return `<label><input type="checkbox" ${checked} onchange="toggleAnimal(${i},'${name}',this.checked)"> ${icon} ${name}</label>`;
+}).join("");
+let card=document.createElement("div");
+card.className="card";
+card.innerHTML=`
+<div class="badge">${area.name}</div>
+<div class="timer ${left<=0&&area.start?'done':''}">${timeText}</div>
+<div class="barWrap"><div class="bar" style="width:${area.start?pct:0}%"></div></div>
+${doneMsg}
+<button onclick="startTimer(${i})">24時間タイマー開始</button>
+<button class="reset" onclick="resetTimer(${i})">リセット</button>
+<div class="grid">${checkedList}</div>
+`;
+areas.appendChild(card);
+});
+}
+render();
+setInterval(render,1000);
+</script>
+</body>
+</html>
