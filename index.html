@@ -6,48 +6,49 @@
 <title>oncehuman動物繁殖タイマー</title>
 <style>
 *{box-sizing:border-box}
-body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#020503;color:#fff;min-height:100vh}
-body:before{content:"";position:fixed;inset:0;background:linear-gradient(rgba(0,0,0,.45),rgba(0,0,0,.92)),url("C6B5C7E6-C0A5-4D30-9AB6-24B33C4FDD14.png") center/cover no-repeat;z-index:-2}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#160f0a;color:#fff4dc;min-height:100vh}
+body:before{content:"";position:fixed;inset:0;background:linear-gradient(rgba(34,18,8,.45),rgba(12,6,3,.94)),url("C6B5C7E6-C0A5-4D30-9AB6-24B33C4FDD14.png") center/cover no-repeat;z-index:-2}
 .app{max-width:760px;margin:auto;padding:22px 12px 80px}
-h1{text-align:center;color:#ffd86b;font-size:34px;margin:10px 0 4px;text-shadow:0 0 14px rgba(255,210,80,.75)}
-.sub{text-align:center;color:#ffe7a6;margin-bottom:18px;font-weight:800}
-.line{height:1px;background:linear-gradient(90deg,transparent,#ffd86b,transparent);margin:8px 20px 14px}
-.area{position:relative;overflow:hidden;border:1px solid #d9a62b;border-radius:18px;padding:14px;margin:14px 0;background:#050505;box-shadow:0 0 18px rgba(255,190,40,.18)}
-.area:before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(0,0,0,.18),rgba(0,0,0,.90)),var(--bg) center/cover no-repeat;opacity:.28;z-index:0}
+h1{text-align:center;color:#ffd58a;font-size:34px;margin:10px 0 4px;text-shadow:0 0 18px rgba(255,170,70,.65)}
+.sub{text-align:center;color:#ffe6bd;margin-bottom:18px;font-weight:800}
+.line{height:1px;background:linear-gradient(90deg,transparent,#e0a34d,transparent);margin:8px 20px 14px}
+.area{position:relative;overflow:hidden;border:1px solid rgba(255,180,90,.75);border-radius:22px;padding:16px;margin:16px 0;background:linear-gradient(180deg,rgba(64,35,17,.84),rgba(20,10,5,.88));box-shadow:0 0 24px rgba(255,150,60,.16)}
+.area:before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(60,30,12,.2),rgba(15,7,3,.9)),var(--bg) center/cover no-repeat;opacity:.23;z-index:0}
 .area>*{position:relative;z-index:1}
-.top{display:grid;grid-template-columns:1fr 1.2fr;gap:14px;align-items:center}
-.badges{display:flex;gap:8px;align-items:center;margin-bottom:10px}
-.place{display:inline-block;border:1px solid #27ff82;color:#fff6bd;background:rgba(0,120,40,.45);border-radius:10px;padding:5px 12px;font-weight:900;font-size:20px}
-.status{display:inline-block;border:1px solid #ff4d4d;background:#9b1010;border-radius:999px;padding:5px 14px;font-weight:900;color:#fff}
-.status.ready{background:#0b7a3a;border-color:#32ff8d}
-.status.active{background:#9c6b00;border-color:#ffd86b}
-label.title{display:block;color:#ffdf75;font-weight:900;margin:10px 0 6px}
-input,select,button{width:100%;font-size:16px;border-radius:10px;padding:12px;border:1px solid rgba(255,216,107,.65);background:rgba(0,0,0,.72);color:#fff}
+.badges{display:flex;gap:8px;align-items:center;margin-bottom:12px}
+.place{border:1px solid #ffcf8a;color:#fff1c7;background:rgba(135,75,28,.58);border-radius:12px;padding:6px 13px;font-weight:900;font-size:20px}
+.status{border:1px solid #ff826d;background:#8d251c;border-radius:999px;padding:6px 14px;font-weight:900;color:#fff}
+.status.ready{background:#4f8a45;border-color:#b8f59b}
+.status.active{background:#b56f1f;border-color:#ffd58a}
+label.title{display:block;color:#ffd58a;font-weight:900;margin:10px 0 6px}
+input,select,button{width:100%;font-size:16px;border-radius:12px;padding:12px;border:1px solid rgba(255,205,140,.65);background:rgba(36,19,9,.78);color:#fff4dc}
 button:disabled{opacity:.45;filter:grayscale(1)}
-.timerBox{text-align:center}
-.timerState{font-size:34px;color:#ffd86b;font-weight:900;text-shadow:0 0 12px rgba(255,210,80,.65)}
-.timer{font-size:42px;letter-spacing:3px;font-weight:900;color:#fff;margin:4px 0}
-.units{font-size:13px;color:#eee;letter-spacing:26px;margin-left:22px}
-.progress{height:14px;background:#202020;border-radius:999px;overflow:hidden;border:1px solid #333;margin:12px 0 2px}
-.bar{height:100%;width:0%;background:linear-gradient(90deg,#1cff7b,#ffd86b);transition:.3s}
-.percent{text-align:center;color:#35ff82;font-weight:900;margin-bottom:10px}
-.actions{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:14px 0}
-button.start{background:linear-gradient(180deg,#48a52c,#245f13);border-color:#ffd86b}
-button.reset{background:linear-gradient(180deg,#d72828,#7c0a0a);border-color:#ff6b4a}
-.selectBox{border:1px solid rgba(255,216,107,.45);border-radius:12px;padding:10px;background:rgba(0,0,0,.42)}
-.selectHead{display:flex;justify-content:space-between;color:#ffd86b;font-weight:900;margin-bottom:8px}
+.nameBox{margin-bottom:12px}
+.selectBox{border:1px solid rgba(255,205,140,.45);border-radius:16px;padding:12px;background:rgba(30,15,7,.58);margin:12px 0}
+.selectHead{display:flex;justify-content:space-between;color:#ffd58a;font-weight:900;margin-bottom:8px}
 .addRow{display:grid;grid-template-columns:1fr 92px;gap:8px}
-button.add{background:linear-gradient(180deg,#2c8d39,#124e1f)}
-.selected{margin-top:8px;border:1px solid rgba(255,255,255,.18);border-radius:10px;min-height:44px;padding:9px;color:#ddd;text-align:center;background:rgba(0,0,0,.45)}
-.pill{display:inline-flex;align-items:center;gap:6px;border:1px solid rgba(255,216,107,.45);border-radius:999px;padding:6px 10px;margin:4px;background:rgba(255,216,107,.08)}
-.pill button{width:auto;padding:2px 7px;margin:0;border-radius:999px;background:#9b1010}
-.toast{position:fixed;top:16px;left:12px;right:12px;background:#0b3d2b;border:1px solid #ffd86b;border-radius:14px;padding:14px;text-align:center;font-weight:900;display:none;z-index:20;color:#fff}
+button.add{background:linear-gradient(180deg,#c88b40,#7a4418)}
+.selected{margin-top:8px;border:1px solid rgba(255,255,255,.18);border-radius:12px;min-height:44px;padding:9px;color:#f3ddbd;text-align:center;background:rgba(18,8,4,.55)}
+.pill{display:inline-flex;align-items:center;gap:6px;border:1px solid rgba(255,205,140,.55);border-radius:999px;padding:6px 10px;margin:4px;background:rgba(255,184,95,.12)}
+.pill button{width:auto;padding:2px 7px;margin:0;border-radius:999px;background:#8d251c}
+.timerPanel{border:1px solid rgba(255,205,140,.35);border-radius:18px;padding:14px;background:rgba(20,9,4,.55);margin-top:12px}
+.timerBox{text-align:center}
+.timerState{font-size:34px;color:#ffd58a;font-weight:900;text-shadow:0 0 12px rgba(255,175,75,.65)}
+.timer{font-size:42px;letter-spacing:3px;font-weight:900;color:#fff7e6;margin:4px 0}
+.units{font-size:13px;color:#f3ddbd;letter-spacing:26px;margin-left:22px}
+.progress{height:14px;background:#2b211a;border-radius:999px;overflow:hidden;border:1px solid #4d3422;margin:12px 0 2px}
+.bar{height:100%;width:0%;background:linear-gradient(90deg,#d0893f,#ffd58a);transition:.3s}
+.percent{text-align:center;color:#ffd58a;font-weight:900;margin-bottom:10px}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:14px 0 4px}
+button.start{background:linear-gradient(180deg,#d69b4c,#8a501f);border-color:#ffd58a}
+button.reset{background:linear-gradient(180deg,#b54632,#6f1d16);border-color:#ff9272}
+.toast{position:fixed;top:16px;left:12px;right:12px;background:#6c3d1b;border:1px solid #ffd58a;border-radius:14px;padding:14px;text-align:center;font-weight:900;display:none;z-index:20;color:#fff}
 .modal{position:fixed;inset:0;background:rgba(0,0,0,.75);display:none;align-items:center;justify-content:center;z-index:30;padding:20px}
-.modalBox{width:320px;background:#071b14;border:2px solid #ffd36b;border-radius:22px;padding:20px;text-align:center;box-shadow:0 0 25px rgba(255,216,107,.5)}
-.modalTitle{font-size:22px;font-weight:900;color:#ffd86b;margin-bottom:12px}
+.modalBox{width:320px;background:#2b1609;border:2px solid #ffd58a;border-radius:22px;padding:20px;text-align:center;box-shadow:0 0 25px rgba(255,190,90,.45)}
+.modalTitle{font-size:22px;font-weight:900;color:#ffd58a;margin-bottom:12px}
 .modalActions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
-.note{text-align:center;color:#ffd86b;font-size:13px;margin:18px 0}
-@media(max-width:620px){.top{grid-template-columns:1fr}.timer{font-size:38px}.units{letter-spacing:20px}}
+.note{text-align:center;color:#ffd58a;font-size:13px;margin:18px 0}
+@media(max-width:620px){.timer{font-size:38px}.units{letter-spacing:20px}}
 </style>
 </head>
 <body>
@@ -71,7 +72,7 @@ button.add{background:linear-gradient(180deg,#2c8d39,#124e1f)}
 </div>
 <script>
 const DAY=24*60*60*1000;
-const KEY="oncehuman_animal_breeding_timer_v2";
+const KEY="oncehuman_animal_breeding_timer_v3";
 const animals=[
 ["オオカミ","🐺"],["ヒョウ","🐆"],["クマ","🐻"],["ホッキョクグマ","🐻‍❄️"],
 ["イノシシ","🐗"],["バッファロー","🦬"],["シカ","🦌"],["ヒツジ","🐑"],
@@ -154,22 +155,9 @@ div.innerHTML=`
 <span class="place">繁殖場${i+1}</span>
 <span id="status${i}" class="status">未開始</span>
 </div>
-<div class="top">
-<div>
+<div class="nameBox">
 <label class="title">テイマー名</label>
 <input value="${a.name}" oninput="setName(${i},this.value)" placeholder="テイマー名を入力してください">
-<div class="actions">
-<button id="start${i}" class="start" onclick="startTimer(${i})">▶ 24時間タイマー開始</button>
-<button id="reset${i}" class="reset" onclick="askReset(${i})">↻ リセット</button>
-</div>
-</div>
-<div class="timerBox">
-<div id="state${i}" class="timerState">未セット</div>
-<div id="timer${i}" class="timer">24:00:00</div>
-<div class="units">時 分 秒</div>
-<div class="progress"><div id="bar${i}" class="bar"></div></div>
-<div id="percent${i}" class="percent">0%</div>
-</div>
 </div>
 <div class="selectBox">
 <div class="selectHead"><span>動物を選択（最大5匹まで）</span><span id="count${i}">0 / 5</span></div>
@@ -178,6 +166,19 @@ div.innerHTML=`
 <button id="add${i}" class="add" onclick="addAnimal(${i})">追加</button>
 </div>
 <div id="selected${i}" class="selected">選択された動物はありません</div>
+</div>
+<div class="timerPanel">
+<div class="timerBox">
+<div id="state${i}" class="timerState">未セット</div>
+<div id="timer${i}" class="timer">24:00:00</div>
+<div class="units">時 分 秒</div>
+<div class="progress"><div id="bar${i}" class="bar"></div></div>
+<div id="percent${i}" class="percent">0%</div>
+</div>
+<div class="actions">
+<button id="start${i}" class="start" onclick="startTimer(${i})">▶ 24時間タイマー開始</button>
+<button id="reset${i}" class="reset" onclick="askReset(${i})">↻ リセット</button>
+</div>
 </div>
 `;
 areas.appendChild(div);
