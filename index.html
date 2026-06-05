@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Once Human 動物繁殖タイマー</title>
+<title>oncehuman動物繁殖タイマー</title>
 <style>
 *{box-sizing:border-box}
 body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#020503;color:#fff;min-height:100vh}
@@ -13,7 +13,7 @@ h1{text-align:center;color:#ffd86b;font-size:34px;margin:10px 0 4px;text-shadow:
 .sub{text-align:center;color:#ffe7a6;margin-bottom:18px;font-weight:800}
 .line{height:1px;background:linear-gradient(90deg,transparent,#ffd86b,transparent);margin:8px 20px 14px}
 .area{position:relative;overflow:hidden;border:1px solid #d9a62b;border-radius:18px;padding:14px;margin:14px 0;background:#050505;box-shadow:0 0 18px rgba(255,190,40,.18)}
-.area:before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(0,0,0,.25),rgba(0,0,0,.86)),var(--bg) center/cover no-repeat;opacity:.34;z-index:0}
+.area:before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(0,0,0,.18),rgba(0,0,0,.90)),var(--bg) center/cover no-repeat;opacity:.28;z-index:0}
 .area>*{position:relative;z-index:1}
 .top{display:grid;grid-template-columns:1fr 1.2fr;gap:14px;align-items:center}
 .badges{display:flex;gap:8px;align-items:center;margin-bottom:10px}
@@ -23,6 +23,7 @@ h1{text-align:center;color:#ffd86b;font-size:34px;margin:10px 0 4px;text-shadow:
 .status.active{background:#9c6b00;border-color:#ffd86b}
 label.title{display:block;color:#ffdf75;font-weight:900;margin:10px 0 6px}
 input,select,button{width:100%;font-size:16px;border-radius:10px;padding:12px;border:1px solid rgba(255,216,107,.65);background:rgba(0,0,0,.72);color:#fff}
+button:disabled{opacity:.45;filter:grayscale(1)}
 .timerBox{text-align:center}
 .timerState{font-size:34px;color:#ffd86b;font-weight:900;text-shadow:0 0 12px rgba(255,210,80,.65)}
 .timer{font-size:42px;letter-spacing:3px;font-weight:900;color:#fff;margin:4px 0}
@@ -40,15 +41,29 @@ button.add{background:linear-gradient(180deg,#2c8d39,#124e1f)}
 .selected{margin-top:8px;border:1px solid rgba(255,255,255,.18);border-radius:10px;min-height:44px;padding:9px;color:#ddd;text-align:center;background:rgba(0,0,0,.45)}
 .pill{display:inline-flex;align-items:center;gap:6px;border:1px solid rgba(255,216,107,.45);border-radius:999px;padding:6px 10px;margin:4px;background:rgba(255,216,107,.08)}
 .pill button{width:auto;padding:2px 7px;margin:0;border-radius:999px;background:#9b1010}
-.toast{position:fixed;top:16px;left:12px;right:12px;background:#0b3d2b;border:1px solid #ffd86b;border-radius:14px;padding:14px;text-align:center;font-weight:900;display:none;z-index:10;color:#fff}
+.toast{position:fixed;top:16px;left:12px;right:12px;background:#0b3d2b;border:1px solid #ffd86b;border-radius:14px;padding:14px;text-align:center;font-weight:900;display:none;z-index:20;color:#fff}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.75);display:none;align-items:center;justify-content:center;z-index:30;padding:20px}
+.modalBox{width:320px;background:#071b14;border:2px solid #ffd36b;border-radius:22px;padding:20px;text-align:center;box-shadow:0 0 25px rgba(255,216,107,.5)}
+.modalTitle{font-size:22px;font-weight:900;color:#ffd86b;margin-bottom:12px}
+.modalActions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
 .note{text-align:center;color:#ffd86b;font-size:13px;margin:18px 0}
 @media(max-width:620px){.top{grid-template-columns:1fr}.timer{font-size:38px}.units{letter-spacing:20px}}
 </style>
 </head>
 <body>
 <div id="toast" class="toast"></div>
+<div id="confirmModal" class="modal">
+  <div class="modalBox">
+    <div class="modalTitle">本当にリセットしますか？</div>
+    <div>リセットすると、この繁殖場のタイマーが未セットに戻ります。</div>
+    <div class="modalActions">
+      <button class="reset" id="confirmYes">はい</button>
+      <button class="start" id="confirmNo">いいえ</button>
+    </div>
+  </div>
+</div>
 <div class="app">
-<h1>Once Human 動物繁殖タイマー</h1>
+<h1>oncehuman動物繁殖タイマー</h1>
 <div class="line"></div>
 <div class="sub">24時間後に繁殖準備完了</div>
 <div id="areas"></div>
@@ -56,7 +71,7 @@ button.add{background:linear-gradient(180deg,#2c8d39,#124e1f)}
 </div>
 <script>
 const DAY=24*60*60*1000;
-const KEY="oncehuman_ready_timer_design2_fixed";
+const KEY="oncehuman_animal_breeding_timer_v2";
 const animals=[
 ["オオカミ","🐺"],["ヒョウ","🐆"],["クマ","🐻"],["ホッキョクグマ","🐻‍❄️"],
 ["イノシシ","🐗"],["バッファロー","🦬"],["シカ","🦌"],["ヒツジ","🐑"],
@@ -69,32 +84,62 @@ let data=JSON.parse(localStorage.getItem(KEY)||"null")||[
 {name:"",start:null,done:false,selected:[]},
 {name:"",start:null,done:false,selected:[]}
 ];
+let resetTarget=null;
 function save(){localStorage.setItem(KEY,JSON.stringify(data))}
 function fmt(ms){if(ms<=0)return"00:00:00";let s=Math.floor(ms/1000),h=Math.floor(s/3600),m=Math.floor((s%3600)/60),sec=s%60;return `${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}:${String(sec).padStart(2,"0")}`}
 function icon(name){let a=animals.find(x=>x[0]===name);return a?a[1]:"🐾"}
 function beep(){try{let c=new AudioContext(),o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.frequency.value=880;g.gain.value=.09;o.start();setTimeout(()=>{o.stop();c.close()},800);if(navigator.vibrate)navigator.vibrate([300,120,300])}catch(e){}}
 function toastMsg(t){toast.textContent=t;toast.style.display="block";setTimeout(()=>toast.style.display="none",5000)}
-function startTimer(i){data[i].start=Date.now();data[i].done=false;save();updateTimers()}
-function resetTimer(i){data[i].start=null;data[i].done=false;save();updateTimers()}
+function isRunning(i){
+if(!data[i].start)return false;
+return data[i].start+DAY-Date.now()>0;
+}
+function startTimer(i){
+data[i].start=Date.now();
+data[i].done=false;
+save();
+updateTimers();
+}
+function askReset(i){
+resetTarget=i;
+confirmModal.style.display="flex";
+}
+function closeConfirm(){
+confirmModal.style.display="none";
+resetTarget=null;
+}
+function doReset(){
+if(resetTarget===null)return;
+data[resetTarget].start=null;
+data[resetTarget].done=false;
+save();
+closeConfirm();
+updateTimers();
+}
+confirmYes.onclick=doReset;
+confirmNo.onclick=closeConfirm;
 function setName(i,v){data[i].name=v;save()}
 function addAnimal(i){
 let sel=document.getElementById("animal"+i);
 let val=sel.value;
 if(!val)return;
-if(data[i].selected.length>=5){alert("1つの繁殖場につき5つまでです");return}
-if(data[i].selected.includes(val)){alert("すでに選択されています");return}
+if(data[i].selected.length>=5){alert("1つの繁殖場につき5匹までです");return}
 data[i].selected.push(val);
 sel.value="";
 save();
 renderSelected(i);
 }
-function removeAnimal(i,name){data[i].selected=data[i].selected.filter(x=>x!==name);save();renderSelected(i)}
+function removeAnimal(i,index){
+data[i].selected.splice(index,1);
+save();
+renderSelected(i);
+}
 function renderSelected(i){
 let box=document.getElementById("selected"+i);
 let count=document.getElementById("count"+i);
 count.textContent=data[i].selected.length+" / 5";
 box.innerHTML=data[i].selected.length
-?data[i].selected.map(n=>`<span class="pill">${icon(n)} ${n}<button onclick="removeAnimal(${i},'${n}')">×</button></span>`).join("")
+?data[i].selected.map((n,idx)=>`<span class="pill">${icon(n)} ${n}<button onclick="removeAnimal(${i},${idx})">×</button></span>`).join("")
 :"選択された動物はありません";
 }
 function build(){
@@ -114,8 +159,8 @@ div.innerHTML=`
 <label class="title">テイマー名</label>
 <input value="${a.name}" oninput="setName(${i},this.value)" placeholder="テイマー名を入力してください">
 <div class="actions">
-<button class="start" onclick="startTimer(${i})">▶ 24時間タイマー開始</button>
-<button class="reset" onclick="resetTimer(${i})">↻ リセット</button>
+<button id="start${i}" class="start" onclick="startTimer(${i})">▶ 24時間タイマー開始</button>
+<button id="reset${i}" class="reset" onclick="askReset(${i})">↻ リセット</button>
 </div>
 </div>
 <div class="timerBox">
@@ -127,10 +172,10 @@ div.innerHTML=`
 </div>
 </div>
 <div class="selectBox">
-<div class="selectHead"><span>動物を選択（最大5つまで）</span><span id="count${i}">0 / 5</span></div>
+<div class="selectHead"><span>動物を選択（最大5匹まで）</span><span id="count${i}">0 / 5</span></div>
 <div class="addRow">
 <select id="animal${i}">${opts}</select>
-<button class="add" onclick="addAnimal(${i})">追加</button>
+<button id="add${i}" class="add" onclick="addAnimal(${i})">追加</button>
 </div>
 <div id="selected${i}" class="selected">選択された動物はありません</div>
 </div>
@@ -145,9 +190,14 @@ data.forEach((a,i)=>{
 let left=a.start?a.start+DAY-Date.now():DAY;
 let pct=a.start?Math.max(0,Math.min(100,left/DAY*100)):0;
 let ready=a.start&&left<=0;
+let running=isRunning(i);
 document.getElementById("timer"+i).textContent=ready?"00:00:00":fmt(left);
 document.getElementById("bar"+i).style.width=pct+"%";
 document.getElementById("percent"+i).textContent=Math.round(100-pct)+"%";
+document.getElementById("start"+i).disabled=running||ready;
+document.getElementById("reset"+i).disabled=!a.start;
+document.getElementById("animal"+i).disabled=running||ready;
+document.getElementById("add"+i).disabled=running||ready;
 let status=document.getElementById("status"+i);
 let state=document.getElementById("state"+i);
 if(ready){
@@ -155,7 +205,7 @@ status.textContent="準備完了";
 status.className="status ready";
 state.textContent="準備完了";
 if(!a.done){a.done=true;beep();toastMsg(`繁殖場${i+1}の繁殖準備が完了しました！`);save()}
-}else if(a.start){
+}else if(running){
 status.textContent="繁殖中";
 status.className="status active";
 state.textContent="繁殖中";
